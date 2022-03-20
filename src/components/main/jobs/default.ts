@@ -51,7 +51,7 @@ createConfig({env});
         const repositories = await harborClient.projectRepository.getOne(projectName);
 
         for(let j=0; j<repositories.length; j++) {
-            if(repositories[j].artifactCount === 0) {
+            if(repositories[j].artifactCount !== 2) {
                 continue;
             }
 
@@ -69,7 +69,7 @@ createConfig({env});
 
         console.log('Scanned station: '+stations[i].name+' ('+stations[i].secure_id+').');
 
-        const repositoriesWithArtifact = repositories.filter(repository => repository.artifactCount > 0);
+        const repositoriesWithArtifact = repositories.filter(repository => repository.artifactCount === 2);
         if(repositoriesWithArtifact.length > 0) {
             break;
         }
