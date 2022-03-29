@@ -21,7 +21,7 @@
   "dependencies": {
     "cross-env": "^7.0.3",
     "@personalhealthtrain/central-common": "^1.3.17",
-    "@trapi/client": "2.0.5",
+    "@trapi/client": "2.0.6",
     "bree": "^8.0.2",
     "dockerode": "^3.3.1",
     "dotenv": "^16.0.0"
