@@ -9,4 +9,4 @@ export type DockerAuthConfig = {
     username: string,
     password: string,
     serveraddress: string,
-}
+};

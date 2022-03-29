@@ -1,39 +1,42 @@
 {
-  "name": "@personalhealthtrain/station-simulator",
-  "author": {
-    "name": "Peter Placzek",
-    "email": "tadashi@animesu.net",
-    "url": "https://tada5hi.net"
-  },
-  "license": "MIT",
-  "version": "1.1.0-0",
-  "description": "This project contains a basic station simulator",
-  "main": "dist/index.js",
-  "scripts": {
-    "lint": "eslint --ext .ts src/",
-    "lint:fix": "npm run lint -- --fix",
-    "start": "node dist/index.js",
-    "dev": "cross-env TS_NODE=true NODE_OPTIONS=\"-r ts-node/register\" node src/index.ts",
-    "dev-watch": "ts-node-dev src/index.ts --respawn --transpileOnly",
-    "build": "rm -rf ./dist && tsc",
-    "test": ""
-  },
-  "dependencies": {
-    "cross-env": "^7.0.3",
-    "@personalhealthtrain/central-common": "^1.3.17",
-    "@trapi/client": "2.0.6",
-    "bree": "^8.0.2",
-    "dockerode": "^3.3.1",
-    "dotenv": "^16.0.0"
-  },
-  "devDependencies": {
-    "@tada5hi/eslint-config-typescript": "^0.0.25",
-    "@types/dockerode": "^3.3.5",
-    "@types/dotenv": "^8.2.0",
-    "@types/node": "^17.0.22",
-    "eslint": "^8.12.0",
-    "np": "^7.6.1",
-    "ts-node": "^10.7.0",
-    "typescript": "^4.6.3"
-  }
+    "name": "@personalhealthtrain/station-simulator",
+    "author": {
+        "name": "Peter Placzek",
+        "email": "tadashi@animesu.net",
+        "url": "https://tada5hi.net"
+    },
+    "license": "MIT",
+    "version": "1.1.0-0",
+    "description": "This project contains a basic station simulator",
+    "main": "dist/index.js",
+    "scripts": {
+        "lint": "eslint --ext .ts src/",
+        "lint:fix": "npm run lint -- --fix",
+        "start": "node dist/index.js",
+        "dev": "cross-env TS_NODE=true NODE_OPTIONS=\"-r ts-node/register\" node src/index.ts",
+        "dev-watch": "ts-node-dev src/index.ts --respawn --transpileOnly",
+        "build": "rm -rf ./dist && tsc",
+        "test": ""
+    },
+    "dependencies": {
+        "@authelion/common": "^0.0.2",
+        "@personalhealthtrain/central-common": "^1.3.24",
+        "@trapi/client": "2.0.6",
+        "@trapi/harbor-client": "^0.1.1",
+        "@trapi/vault-client": "^0.0.1",
+        "bree": "^8.0.2",
+        "dockerode": "^3.3.1",
+        "dotenv": "^16.0.0"
+    },
+    "devDependencies": {
+        "@tada5hi/eslint-config-typescript": "^0.0.25",
+        "@types/dockerode": "^3.3.5",
+        "@types/dotenv": "^8.2.0",
+        "@types/node": "^17.0.22",
+        "cross-env": "^7.0.3",
+        "eslint": "^8.12.0",
+        "np": "^7.6.1",
+        "ts-node": "^10.7.0",
+        "typescript": "^4.6.3"
+    }
 }

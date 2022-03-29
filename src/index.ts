@@ -20,13 +20,6 @@ const config = createConfig({ env });
 // Start Server
 //--------------------------------------------------------------------
 
-function signalStart() {
-    // eslint-disable-next-line no-console
-    console.table([
-        ['Environment', env.env],
-    ]);
-}
-
 function start() {
     config.components.forEach((c) => c.start());
     config.aggregators.forEach((a) => a.start());

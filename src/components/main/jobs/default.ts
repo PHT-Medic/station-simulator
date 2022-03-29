@@ -7,76 +7,82 @@
 
 import { parentPort } from 'node:worker_threads';
 import process from 'node:process';
-import {useClient} from "@trapi/client";
+import { useClient } from '@trapi/client';
+import { HarborClient, Repository, parseConnectionString } from '@trapi/harbor-client';
 import {
-    buildRegistryStationProjectName,
-    HarborAPI,
-    HTTPClient,
-    parseHarborConnectionString,
-} from "@personalhealthtrain/central-common";
-import createConfig from "../../../config";
+    Ecosystem,
+    HTTPClient, RegistryProjectType,
+} from '@personalhealthtrain/central-common';
+import { URL } from 'url';
+import createConfig from '../../../config';
 
-import env from "../../../env";
-import {URL} from "url";
-import {pullDockerImage} from "../helpers/image-pull";
-import {pushDockerImages} from "../helpers/image-push";
-import {DockerAuthConfig} from "../helpers/type";
-createConfig({env});
+import env from '../../../env';
+import { pullDockerImage } from '../helpers/image-pull';
+import { pushDockerImages } from '../helpers/image-push';
+import { DockerAuthConfig } from '../helpers/type';
+
+createConfig({ env });
 
 (async () => {
     console.log('Start station scanning...');
 
-    const harborClient = useClient<HarborAPI>('harbor');
-    const harborConfig = parseHarborConnectionString(env.harborConnectionString);
+    const harborClient = useClient<HarborClient>('harbor');
+    const harborConfig = parseConnectionString(env.harborConnectionString);
     const harborUrL = new URL(harborConfig.host);
 
-    const {data: stations} = await useClient<HTTPClient>().station.getMany({
-        fields: ['+secure_id', '+registry_project_account_name', '+registry_project_account_token']
+    const { data: projects } = await useClient<HTTPClient>().registryProject.getMany({
+        filter: {
+            type: RegistryProjectType.STATION,
+            ecosystem: Ecosystem.DEFAULT,
+        },
+        fields: ['+account_secret'],
     });
 
-    for(let i=0; i<stations.length; i++) {
-        console.log('Scanning station: '+stations[i].name+' ('+stations[i].secure_id+')...');
+    for (let i = 0; i < projects.length; i++) {
+        console.log(`Scanning station: ${projects[i].name} (${projects[i].external_name})...`);
         const authConfig : DockerAuthConfig = {
             serveraddress: harborUrL.hostname,
-            username: stations[i].registry_project_account_name,
-            password: stations[i].registry_project_account_token
+            username: projects[i].account_name,
+            password: projects[i].account_secret,
         };
 
-        if(!stations[i].registry_project_account_name || !stations[i].registry_project_account_token) {
-            console.log('Skipping station: '+stations[i].name+'...', stations[i]);
+        if (!projects[i].account_name || !projects[i].account_secret) {
+            console.log(`Skipping station: ${projects[i].name}...`);
             continue;
         }
 
-        const projectName = buildRegistryStationProjectName(stations[i].secure_id);
-        const repositories = await harborClient.projectRepository.getOne(projectName);
+        const projectName = projects[i].external_name;
+        let repositories : Repository[] = [];
 
-        for(let j=0; j<repositories.length; j++) {
-            if(repositories[j].artifactCount !== 2) {
+        repositories = await harborClient.projectRepository.getMany(projectName);
+
+        for (let j = 0; j < repositories.length; j++) {
+            if (repositories[j].artifact_count < 2) {
                 continue;
             }
 
             const fullPath = `${harborUrL.hostname}/${projectName}/${repositories[j].name}:latest`;
 
-            console.log('Pulling: '+fullPath+'...');
+            console.log(`Pulling: ${fullPath}...`);
             await pullDockerImage(fullPath, authConfig);
-            console.log('Pulled: '+fullPath+'.');
+            console.log(`Pulled: ${fullPath}.`);
 
-            console.log('Pushing: '+fullPath+'...');
+            console.log(`Pushing: ${fullPath}...`);
             await pushDockerImages(fullPath, authConfig);
 
-            console.log('Pushed train: '+fullPath+'.');
+            console.log(`Pushed train: ${fullPath}.`);
         }
 
-        console.log('Scanned station: '+stations[i].name+' ('+stations[i].secure_id+').');
+        console.log(`Scanned station: ${projects[i].name} (${projects[i].external_name}).`);
 
-        const repositoriesWithArtifact = repositories.filter(repository => repository.artifactCount === 2);
-        if(repositoriesWithArtifact.length > 0) {
+        const repositoriesWithArtifact = repositories.filter((repository) => repository.artifact_count === 2);
+        if (repositoriesWithArtifact.length > 0) {
             break;
         }
     }
 
     if (parentPort) {
-        parentPort.postMessage('done')
+        parentPort.postMessage('done');
     } else {
         process.exit(0);
     }

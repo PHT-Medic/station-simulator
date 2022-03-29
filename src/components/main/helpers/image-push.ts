@@ -5,8 +5,8 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import {useDocker} from "../../../config/docker";
-import {DockerAuthConfig} from "./type";
+import { useDocker } from '../../../config/docker';
+import { DockerAuthConfig } from './type';
 
 export async function pushDockerImages(image: string, authConfig: DockerAuthConfig) {
     const imageLatest = await useDocker()

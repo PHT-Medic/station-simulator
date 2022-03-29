@@ -5,15 +5,17 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import { setConfig as setHTTPConfig, useClient as useHTTPClient } from '@trapi/client';
+import { Robot } from '@authelion/common';
+import { setConfig as setHTTPConfig, useClient, useClient as useHTTPClient } from '@trapi/client';
 import {
     HTTPClient,
-    HarborAPI,
-    refreshAuthRobotTokenOnResponseError, VaultAPI,
+    ROBOT_SECRET_ENGINE_KEY, ServiceID, createRefreshRobotTokenOnResponseErrorHandler,
 } from '@personalhealthtrain/central-common';
 import https from 'https';
+import { VaultClient } from '@trapi/vault-client';
+import { HarborClient } from '@trapi/harbor-client';
 import { Environment } from './env';
-import {buildMainComponentHandler} from "./components/main";
+import { buildMainComponentHandler } from './components/main';
 
 interface ConfigContext {
     env: Environment
@@ -26,7 +28,7 @@ export type Config = {
 
 function createConfig({ env } : ConfigContext) : Config {
     setHTTPConfig({
-        clazz: HarborAPI,
+        clazz: HarborClient,
         driver: {
             httpsAgent: new https.Agent({
                 rejectUnauthorized: false,
@@ -38,7 +40,7 @@ function createConfig({ env } : ConfigContext) : Config {
     }, 'harbor');
 
     setHTTPConfig({
-        clazz: VaultAPI,
+        clazz: VaultClient,
         driver: {
             httpsAgent: new https.Agent({
                 rejectUnauthorized: false,
@@ -59,14 +61,21 @@ function createConfig({ env } : ConfigContext) : Config {
 
     useHTTPClient().mountResponseInterceptor(
         (value) => value,
-        refreshAuthRobotTokenOnResponseError,
+        createRefreshRobotTokenOnResponseErrorHandler({
+            async load() {
+                return useClient<VaultClient>('vault').keyValue
+                    .find(ROBOT_SECRET_ENGINE_KEY, ServiceID.SYSTEM)
+                    .then((response) => response.data as Robot);
+            },
+            httpClient: useClient(),
+        }),
     );
 
     const aggregators : {start: () => void}[] = [
     ];
 
     const components : {start: () => void}[] = [
-        buildMainComponentHandler()
+        buildMainComponentHandler(),
     ];
 
     return {
