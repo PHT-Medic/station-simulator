@@ -24,7 +24,7 @@
         "@trapi/client": "2.0.9",
         "@trapi/harbor-client": "^0.1.5",
         "@trapi/vault-client": "^0.0.4",
-        "bree": "^8.0.3",
+        "bree": "^9.1.1",
         "dockerode": "^3.3.1",
         "dotenv": "^16.0.1"
     },
