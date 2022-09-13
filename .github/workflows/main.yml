@@ -16,7 +16,7 @@ jobs:
 
         strategy:
             matrix:
-                node-version: [16.x]
+                node-version: [16.x, 18.x]
 
         steps:
             - uses: actions/checkout@v3
@@ -36,5 +36,5 @@ jobs:
 
             - name: Build and install packages
               run: |
-                  npm ci
+                  npm i
                   npm run build
