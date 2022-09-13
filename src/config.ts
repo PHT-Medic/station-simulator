@@ -6,14 +6,16 @@
  */
 
 import { Robot } from '@authelion/common';
-import { setConfig as setHTTPConfig, useClient, useClient as useHTTPClient } from '@trapi/client';
+import { setConfig as setHTTPConfig, useClient, useClient as useHTTPClient } from 'hapic';
 import {
     HTTPClient,
-    ROBOT_SECRET_ENGINE_KEY, ServiceID, createRefreshRobotTokenOnResponseErrorHandler,
+    ROBOT_SECRET_ENGINE_KEY,
+    ServiceID,
+    createRefreshRobotTokenOnResponseErrorHandler,
 } from '@personalhealthtrain/central-common';
 import https from 'https';
-import { VaultClient } from '@trapi/vault-client';
-import { HarborClient } from '@trapi/harbor-client';
+import { Client as VaultClient } from '@hapic/vault';
+import { Client as HarborClient } from '@hapic/harbor';
 import { Environment } from './env';
 import { buildMainComponentHandler } from './components/main';
 

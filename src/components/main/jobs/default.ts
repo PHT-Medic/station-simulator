@@ -7,8 +7,8 @@
 
 import { parentPort } from 'node:worker_threads';
 import process from 'node:process';
-import { useClient } from '@trapi/client';
-import { HarborClient, Repository, parseConnectionString } from '@trapi/harbor-client';
+import { useClient } from 'hapic';
+import { Client, Repository, parseConnectionString } from '@hapic/harbor';
 import {
     Ecosystem,
     HTTPClient, RegistryProjectType,
@@ -26,7 +26,7 @@ createConfig({ env });
 (async () => {
     console.log('Start station scanning...');
 
-    const harborClient = useClient<HarborClient>('harbor');
+    const harborClient = useClient<Client>('harbor');
     const harborConfig = parseConnectionString(env.harborConnectionString);
     const harborUrL = new URL(harborConfig.host);
 
