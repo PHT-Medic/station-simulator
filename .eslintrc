@@ -1,6 +1,6 @@
 {
     "extends": [
-        "@tada5hi/eslint-config-vue-typescript"
+        "@tada5hi/eslint-config-typescript"
     ],
     "parserOptions": {
         "project": "./tsconfig.json",
