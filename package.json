@@ -30,7 +30,7 @@
     },
     "devDependencies": {
         "@tada5hi/eslint-config-typescript": "^1.0.7",
-        "@types/dockerode": "^3.3.9",
+        "@types/dockerode": "^3.3.11",
         "@types/dotenv": "^8.2.0",
         "@types/node": "^18.8.3",
         "cross-env": "^7.0.3",
