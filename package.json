@@ -26,7 +26,7 @@
         "@hapic/vault":  "^0.0.2",
         "bree": "^9.1.2",
         "dockerode": "^3.3.4",
-        "dotenv": "^16.0.2"
+        "dotenv": "^16.0.3"
     },
     "devDependencies": {
         "@tada5hi/eslint-config-typescript": "^1.0.7",
