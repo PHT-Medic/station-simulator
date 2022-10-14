@@ -29,7 +29,7 @@
         "dotenv": "^16.0.3"
     },
     "devDependencies": {
-        "@tada5hi/eslint-config-typescript": "^1.0.7",
+        "@tada5hi/eslint-config-typescript": "^1.0.8",
         "@types/dockerode": "^3.3.11",
         "@types/dotenv": "^8.2.0",
         "@types/node": "^18.8.3",
