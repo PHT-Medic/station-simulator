@@ -23,7 +23,7 @@
         "@personalhealthtrain/central-common": "^1.3.27",
         "hapic": "0.0.2",
         "@hapic/harbor": "^0.0.2",
-        "@hapic/vault":  "^0.0.2",
+        "@hapic/vault":  "^0.1.0",
         "bree": "^9.1.2",
         "dockerode": "^3.3.4",
         "dotenv": "^16.0.3"
