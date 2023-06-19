@@ -5,18 +5,13 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import { Robot } from '@authelion/common';
-import { setConfig as setHTTPConfig, useClient, useClient as useHTTPClient } from 'hapic';
+import { ROBOT_SYSTEM_NAME, mountClientResponseErrorTokenHook } from '@authup/core';
+import { setClient } from 'hapic';
 import {
-    HTTPClient,
-    ROBOT_SECRET_ENGINE_KEY,
-    ServiceID,
-    createRefreshRobotTokenOnResponseErrorHandler,
+    APIClient,
 } from '@personalhealthtrain/central-common';
-import https from 'https';
-import { Client as VaultClient } from '@hapic/vault';
-import { Client as HarborClient } from '@hapic/harbor';
-import { Environment } from './env';
+import { HarborClient, setClient as setHarborClient } from '@hapic/harbor';
+import type { Environment } from './env';
 import { buildMainComponentHandler } from './components/main';
 
 interface ConfigContext {
@@ -29,49 +24,24 @@ export type Config = {
 };
 
 function createConfig({ env } : ConfigContext) : Config {
-    setHTTPConfig({
-        clazz: HarborClient,
-        driver: {
-            httpsAgent: new https.Agent({
-                rejectUnauthorized: false,
-            }),
-        },
-        extra: {
-            connectionString: env.harborConnectionString,
-        },
-    }, 'harbor');
+    const harborClient = new HarborClient({
+        connectionString: env.harborConnectionString,
+    });
+    setHarborClient(harborClient);
 
-    setHTTPConfig({
-        clazz: VaultClient,
-        driver: {
-            httpsAgent: new https.Agent({
-                rejectUnauthorized: false,
-            }),
-        },
-        extra: {
-            connectionString: env.vaultConnectionString,
-        },
-    }, 'vault');
-
-    setHTTPConfig({
-        clazz: HTTPClient,
-        driver: {
-            baseURL: env.apiUrl,
-            withCredentials: true,
-        },
+    const apiClient = new APIClient({
+        baseURL: env.apiUrl,
     });
 
-    useHTTPClient().mountResponseInterceptor(
-        (value) => value,
-        createRefreshRobotTokenOnResponseErrorHandler({
-            async load() {
-                return useClient<VaultClient>('vault').keyValue
-                    .find(ROBOT_SECRET_ENGINE_KEY, ServiceID.SYSTEM)
-                    .then((response) => response.data as Robot);
-            },
-            httpClient: useClient(),
-        }),
-    );
+    mountClientResponseErrorTokenHook(apiClient, {
+        baseURL: env.apiUrl,
+        tokenCreator: {
+            type: 'robotInVault',
+            name: ROBOT_SYSTEM_NAME,
+            vault: env.vaultConnectionString,
+        },
+    });
+    setClient(apiClient);
 
     const aggregators : {start: () => void}[] = [
     ];
