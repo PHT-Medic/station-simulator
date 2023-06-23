@@ -22,7 +22,7 @@
         "@authup/core": "^0.37.1",
         "@personalhealthtrain/central-common": "^2.4.0-alpha.0",
         "hapic": "2.0.0",
-        "@hapic/harbor": "^2.0.0",
+        "@hapic/harbor": "^2.1.1",
         "@hapic/oauth2": "^2.0.0",
         "@hapic/vault":  "^2.0.0",
         "bree": "^9.1.3",
